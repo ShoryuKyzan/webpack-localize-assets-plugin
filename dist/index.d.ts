@@ -1,15 +1,15 @@
-import type { SimpleCallExpression } from 'estree';
+import { SimpleCallExpression } from 'estree';
 
-export type LocaleName = string;
-export type LocaleFilePath = string;
-export type LocalizedStringKey = string;
-export type LocaleStrings<LocalizedData> = Record<LocalizedStringKey, LocalizedData>;
-export type UnprocessedLocalesMap<LocalizedData = string> = Record<
+type LocaleName = string;
+type LocaleFilePath = string;
+type LocalizedStringKey = string;
+type LocaleStrings<LocalizedData> = Record<LocalizedStringKey, LocalizedData>;
+type UnprocessedLocalesMap<LocalizedData = string> = Record<
 	LocaleName,
 	LocaleFilePath | LocaleStrings<LocalizedData>
 >;
 
-export type Options<LocalizedData = string> = {
+type Options<LocalizedData = string> = {
 	locales: UnprocessedLocalesMap<LocalizedData>;
 	functionName?: string;
 	throwOnMissing?: boolean;
@@ -27,17 +27,25 @@ type LocalizeCompilerOption<LocalizedData>
 		? { localizeCompiler?: LocalizeCompiler<LocalizedData> }
 		: { localizeCompiler: LocalizeCompiler<LocalizedData> };
 
-export interface LocalizeCompilerContext<LocalizedData = string> {
+interface LocalizeCompilerContext<LocalizedData = string> {
 	readonly callNode: SimpleCallExpression;
 	resolveKey(stringKey?: string): LocalizedData;
 	emitWarning(message: string): void;
 	emitError(message: string): void;
 }
 
-export interface LocalizeCompiler<LocalizedData = string> {
+interface LocalizeCompiler<LocalizedData = string> {
 	[functionName: string]: (
 		this: LocalizeCompilerContext<LocalizedData>,
 		functionArgments: string[],
 		localeName: string,
 	) => string;
 }
+
+declare class LocalizeAssetsPlugin<LocalizedData = string> {
+	constructor(options: Options<LocalizedData>);
+
+	apply(compiler: any): void;
+}
+
+export { LocalizeAssetsPlugin as default };
